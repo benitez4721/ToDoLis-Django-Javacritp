@@ -1,0 +1,26 @@
+{% extends 'todolist/layout.html'%}
+{% load static %}
+{% block body %}
+    <div class="second-container">
+        <div class = "input-container">
+            <input type="text" class="task-input" placeholder="add a task..." id="task-input">
+        </div>
+        <hr>
+        <div class="tasks-container" id="tasks-container">
+            {% for task in tasks %}
+            <div class="task" id="task{{task.id}}">
+                <div class="form-check">
+                    {% if task.done %}
+                    <input type="checkbox" class="form-check-input" id={{task.id}} style="margin-right: 10px;" checked onclick="check(id)">
+                    {% else %}
+                    <input type="checkbox" class="form-check-input" id={{task.id}} style="margin-right: 10px;" onclick="check(id)">
+                    {% endif %}                    
+                    <label class="form-check-label" for={{task.id}}>{{task.body}}</label>
+                </div>
+                <i class="fas fa-trash-alt" style="color: rgb(187, 8, 8); cursor: pointer;" onclick="delete_task({{task.id}})"></i>
+            </div>
+            {%endfor %}
+        </div>
+    </div>
+    <script src="{% static 'todolist/main.js' %}"></script>
+{% endblock %}
