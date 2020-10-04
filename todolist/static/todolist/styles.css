@@ -10,24 +10,23 @@ body {
 }
 
 header{
-    background: #19CC8B;
+    background: #008e76;
+    width: 100%;
 }
 
-nav{
-    position: relative;
+.nav{
     display: flex;
     height: 80px;
     width: 98%;
     margin: auto;
-    background: transparent;
     align-items: center;
     justify-content: space-between;
+
 }
 
 .profile{
-    display: flex;
-    align-items: center;
-}
+    
+} 
 
 .name{
     margin-right: 15px;
@@ -51,7 +50,7 @@ h2{
 
 .list-container{
     margin-top: 60px;
-    height: 550px;
+    height: calc(80% - 80px);
     width: 60%;
 
 }
@@ -60,7 +59,7 @@ h2{
     width: 100%;
     display: flex;
     justify-content: center;
-    height: 20%;
+    padding: 10px 0;
     border-radius: 3px;
     box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.5) ;
 }
@@ -74,12 +73,9 @@ h2{
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border-bottom: 2px solid transparent;
+    border-bottom: 3px solid transparent;
 }
 
-.active{
-    border-bottom: 2px solid #4169E1;
-}
 
 .item-header a, .item-header i{
     color: rgb(143, 140, 140);
@@ -95,11 +91,13 @@ h2{
     margin-bottom: 10px;
 }
 .second-container{
-    margin: 20px 0;
+    height: 30%;
+    margin-top: 15px;
+    margin-bottom: 20px
 }
 .task-input {
     border: none;
-    padding: 20px 20px;
+    padding: 5px 20px;
     width: 100%;
 }
 .task-input:focus {
@@ -108,12 +106,47 @@ h2{
 
 .task {
     padding: 15px 10px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
 }
 
-.fa-trash-al{
-    color: red !important;
+.tasks-container, .teams-container{
+    height: 400px;
+    width: 100%;
+    overflow: auto;
+}
+
+.edit-task {
+    border: none;
+    width: 95%;
+}
+
+.edit-task:focus {
+    outline: none;
+}
+
+.form-check {
+    width: 95%;
+    display: flex;
+}
+
+.modal-content{
+    background: rgb(219, 219, 219) !important;
+}
+
+.buttons {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-footer{
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
 }
 
 @media screen and (max-width:500px){
