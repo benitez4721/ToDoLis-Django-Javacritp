@@ -9,6 +9,7 @@ from django.urls import reverse
 from .models import User, Task, Team, Team_User
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -74,6 +75,7 @@ def register_view(request):
         return JsonResponse({"error": "Method must be post"})           
 
 # Render main page
+@login_required(login_url='/')
 def main(request):
 
     tasks = request.user.tasks.all()
@@ -84,6 +86,7 @@ def main(request):
 
 #Add new task
 @csrf_exempt
+@login_required(login_url='/')
 def add_task(request):
 
     if request.method == "POST":
@@ -101,6 +104,7 @@ def add_task(request):
 
 # Check task to complete or incomplete
 @csrf_exempt
+@login_required(login_url='/')
 def check(request, id):
 
     if request.method == "PUT":
@@ -113,6 +117,7 @@ def check(request, id):
 
 # Delete a task
 @csrf_exempt
+@login_required(login_url='/')
 def delete(request,id):
     if request.method == 'DELETE':
         try:
@@ -127,6 +132,7 @@ def delete(request,id):
 
 
 @csrf_exempt
+@login_required(login_url='/')
 def edit_task(request, id):
     if request.method == 'PUT':
         try:
@@ -144,13 +150,15 @@ def edit_task(request, id):
         return JsonResponse({"ok": False, "message" : "Method must be put"})    
 
 # Get all teams where the user belogns
+@login_required(login_url='/')
 def get_teams(request):
     teams = request.user.teams.all()
     return JsonResponse({"actual_user" : request.user.username, "teams" : [t.team.serialize() for t in teams]}, safe=False)
 
 
-@csrf_exempt
 # Create a new team
+@csrf_exempt
+@login_required(login_url='/')
 def create_team(request):
 
     if request.method == 'POST':
@@ -174,6 +182,7 @@ def create_team(request):
         return JsonResponse({"ok": False, "message": "Method must be Post"})
 
 # Leave a team  
+@login_required(login_url='/')
 def leave_team(request, id):
     try:
         #Attempt to get the team
@@ -202,6 +211,7 @@ def leave_team(request, id):
 
 #Join a team
 @csrf_exempt
+@login_required(login_url='/')
 def join_team(request):
     if request.method ==  "POST":
         code = json.loads(request.body)["code"]
@@ -219,8 +229,9 @@ def join_team(request):
     else:
         return JsonResponse({"ok" : False, "message" : "method must be post" })
 
-@csrf_exempt
 # Team owner assigns tasks to team members
+@csrf_exempt
+@login_required(login_url='/')
 def add_team_task(request):
 
     if request.method ==  "POST":
