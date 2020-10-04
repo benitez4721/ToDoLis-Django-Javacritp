@@ -8,9 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
             task_input.value = ''
         }
     })
+    $('#joinTeamModal').on('hidden.bs.modal', function (e) {
+        document.querySelector(`#join-errors`).innerHTML = ''
+    })
+    
 })
 
-
+// Load tasks view
 function load_tasks(){
 
     let tasks_link = document.querySelector('#tasks-link')
@@ -23,10 +27,11 @@ function load_tasks(){
    
 }
 
+// Load teams view
 function load_teams(){
     fetch('/teams')
     .then( resp => resp.json())
-    .then( resp => {console.log(resp)
+    .then( resp => {
         resp.teams.forEach(team => {
             render_team(team, resp.actual_user)
             
@@ -39,6 +44,7 @@ function load_teams(){
     document.querySelector('#tasks-link').style.borderBottom = '3px solid transparent'
 }
 
+// Adds teams to the view
 function render_team(team, actual_user) {
     let members = "<ul>"
     team.members.forEach( member => {
@@ -59,13 +65,16 @@ function render_team(team, actual_user) {
     let element = document.createElement('div')
     element.innerHTML = `<div class="card-body">
         <h5 class="card-title">${team.name}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Created by: ${team.owner} </h6>
+        <h6 class="card-subtitle mb-2 text-muted">Admin: ${team.owner} </h6>
         <h6 class="card-subtitle mb-2 text-muted">Code: ${team.code} </h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <p class="card-text">${team.description}</p>
         <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${team.id}" aria-expanded="true" aria-controls="collapseOne">
             Members
         </button>
-        <button class = "btn btn-link" type = "button" onclick = "leave_team(${team.id})">
+        <div class="spinner-grow text-primary spinner-grow-sm" role="status" id = "leave-spinner${team.id}" style = "display: none">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <button class = "btn btn-link" type = "button" onclick = "leave_team(${team.id})" id = "leave-button${team.id}">
             Leave Team
         </button>
         <div id="collapse${team.id}" class="collapse" aria-labelledby="headingOne" data-parent="#team${team.id}">
@@ -80,7 +89,7 @@ function render_team(team, actual_user) {
     document.querySelector('#teams-container').append(element)
 }
 
-
+// Add a new task
 function add_task(task_body){
    
     if (task_body.length > 0){
@@ -92,14 +101,16 @@ function add_task(task_body){
         })
         .then( resp => resp.json())
         .then( task => {
-            console.log(task)
             let element = document.createElement('div')
             element.innerHTML = `
                 <div class = "form-check">
                     <input type="checkbox" class="form-check-input" id=${task.id} style="margin-right: 10px;">                   
                     <input type="text" value="${task_body}" class="edit-task" id = "edit-task${task.id}" onkeyup="edit_task(event,${task.id})">
                 </div>
-                <i class="fas fa-trash-alt" style="color: rgb(187, 8, 8); cursor: pointer;" onclick = "delete_task(${task.id})"></i>
+                <i class="fas fa-trash-alt text-danger" style="cursor: pointer;" onclick = "delete_task(${task.id})" id = "trash${task.id}"></i>
+                <div class="spinner-grow text-danger spinner-grow-sm" role="status" id = "trash-spinner${task.id}" style="display: none;">
+                    <span class="sr-only">Loading...</span>
+                </div>
             `
             element.classList.add("task")
             element.id = `task${task.id}`
@@ -108,23 +119,32 @@ function add_task(task_body){
     }
 }
 
+// Applies check action
 function check(id){
     fetch(`check/${id}`, {
         method: "PUT"
     })
-    .then( resp => resp.json())
-    .then( resp => console.log(resp))
+    
 }
 
+// Delete a task
 function delete_task(id){
-    fetch(`delete/${id}`)
-    .then(resp => resp.json())
-    .then(resp => console.log(resp))
-    console.log("fsaomefsa");
-    document.querySelector(`#task${id}`).remove()
+    document.querySelector(`#trash${id}`).style.display = 'none'
+    document.querySelector(`#trash-spinner${id}`).style.display = 'inline-block'
 
+    fetch(`delete/${id}`, {
+        method : "DELETE"
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+        if (resp.ok){   
+            document.querySelector(`#task${id}`).remove()
+        }
+        
+    })
 }
 
+// Edit a task
 function edit_task(e,id){
     if (e.keyCode == 13 || e == 'f'){
         body = document.querySelector(`#edit-task${id}`).value
@@ -135,27 +155,29 @@ function edit_task(e,id){
                     body
                 })
             })
-            .then( resp => resp.json())
-            .then( resp => console.log(resp))
+            
         }
     }
 }
 
+// Create a new team
 function create_team(){
-    name = document.querySelector('#team-input').value
+    let name = document.querySelector('#team-input').value
+    let desc = document.querySelector('#team-description').value
     document.querySelector('#team-input').value = ''
+    document.querySelector('#team-description').value = ''
     if (name.length > 0){
         document.querySelector('#create-buttons').style.display = 'none'
         document.querySelector('#create-spinner').style.display = 'flex'
         fetch('/create_team', {
             method: "POST",
             body: JSON.stringify({
-                name
+                name,
+                desc
             })
         })
         .then( resp => resp.json())
         .then( team => {
-            console.log(team);
             $('#createTeamModal').modal('hide')
             document.querySelector('#create-buttons').style.display = 'block'
             document.querySelector('#create-spinner').style.display = 'none'
@@ -164,14 +186,23 @@ function create_team(){
     }
 }
 
+// Leave the team
 function leave_team(id){
+    document.querySelector(`#leave-button${id}`).style.display = 'none'
+    document.querySelector(`#leave-spinner${id}`).style.display = 'inline-block'
+    
     fetch(`leave_team/${id}`)
     .then(resp => resp.json())
     .then(resp => {
+        if(resp.ok){
+
+            document.querySelector(`#team${id}`).remove()
+        }
     })
-    document.querySelector(`#team${id}`).remove()
+    
 }
 
+// Join a team
 function join_team(){
 
     code = document.querySelector('#code-input').value
@@ -206,6 +237,8 @@ function join_team(){
     }
 }
 
+
+// Display modal to add team task
 function display_taskModal(team_id, user_id){
 
     document.querySelector("#task-team-input").value = ''
@@ -215,8 +248,8 @@ function display_taskModal(team_id, user_id){
 
 }
 
+// Add a new team task
 function add_taskTeam(){
-    $('#taskTeamModal').modal('hide')
     const task_teamInput = document.querySelector("#task-team-input")
     let team_id = task_teamInput.getAttribute('team_id')
     let user_id = task_teamInput.getAttribute('user_id')
@@ -234,41 +267,52 @@ function add_taskTeam(){
         })
         .then( resp => resp.json())
         .then( resp => {
-            console.log(resp.task)
-            $('#taskTeamModal').modal('hide')
             document.querySelector('#add-buttons').style.display = 'block'
             document.querySelector('#add-spinner').style.display = 'none'
-            let element = document.createElement('div')
-            element.innerHTML = `
-                <div class = "form-check">
-                    <input type="checkbox" class="form-check-input" id="${resp.task.id}" style="margin-right: 10px;">                   
-                    <div style="display: flex; gap: 10px; align-items: flex-start;">         
-                            <span style="color: green;">${resp.task.team}: </span>
-                            <input type="text" value="${resp.task.body}"  disabled class="edit-task" id = "edit-task${resp.task.id}" onkeyup="edit_task(event,${resp.task.id})" onfocusout="edit_task('f',${resp.task.id})">                    
+            if (user_id == resp.owner_id) {
+                let element = document.createElement('div')
+                element.innerHTML = `
+                    <div class = "form-check">
+                        <input type="checkbox" class="form-check-input" id="${resp.task.id}" style="margin-right: 10px;">                   
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">         
+                                <span style="color: green;">${resp.task.team}: </span>
+                                <input type="text" value="${resp.task.body}"  disabled class="edit-task" id = "edit-task${resp.task.id}" onkeyup="edit_task(event,${resp.task.id})" onfocusout="edit_task('f',${resp.task.id})">                    
+                        </div>
                     </div>
-                </div>
-                <i class="fas fa-trash-alt" style="color: rgb(187, 8, 8); cursor: pointer;" onclick = "delete_task(${resp.task.id})"></i>
-            `
-            element.classList.add("task")
-            element.id = `task${resp.task.id}`
-            document.querySelector('#tasks-container').append(element)
+                    <i class="fas fa-trash-alt text-danger" style="cursor: pointer;" onclick = "delete_task(${resp.task.id})" id = "trash${resp.task.id}"></i>
+                    <div class="spinner-grow text-danger spinner-grow-sm" role="status" id = "trash-spinner${resp.task.id}" style="display: none;">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                `
+                element.classList.add("task")
+                element.id = `task${resp.task.id}`
+                document.querySelector('#tasks-container').append(element)
+            }
+            $('#taskTeamModal').modal('hide')
         })
+      
     }
 }
 
+// Event that allows submit the team task modal info by pressing enter
 document.querySelector('#taskTeamModal').addEventListener( 'keyup', (e) => {
     if (e.keyCode == 13){
         add_taskTeam()
     }
 })
+
+// Event that allows submit the create team modal info by pressing enter
 document.querySelector('#createTeamModal').addEventListener( 'keyup', (e) => {
     if (e.keyCode == 13){
         create_team()
     }
 })
+
+// Event that allows submit the join team modal info by pressing enter
 document.querySelector('#joinTeamModal').addEventListener( 'keyup', (e) => {
     if (e.keyCode == 13){
         join_team()
     }
 })
+
 

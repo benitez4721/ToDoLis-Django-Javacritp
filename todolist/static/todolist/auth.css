@@ -40,6 +40,9 @@ body,html {
     height: 100px;
     transform: translate(0,-70%);
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     left: 0;
     right: 0;
     border: 3px solid #3d424d;
@@ -122,4 +125,33 @@ input:focus{
     outline: none;
 }
 
+@media screen and (max-width:370px){
+    
+
+    input {
+        margin-bottom: 20px;
+        width: 200px;
+        height: 35px;
+        background: #555D6B;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        color: #FEFFFF
+    }
+}
+
+@media screen and (max-width:260px){
+    
+
+    input {
+        margin-bottom: 20px;
+        width: 150px;
+        height: 35px;
+        background: #555D6B;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        color: #FEFFFF
+    }
+}
 

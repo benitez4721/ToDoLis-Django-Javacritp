@@ -13,7 +13,7 @@ class Task(models.Model):
     team = models.ForeignKey('Team', related_name="tasks", on_delete = models.CASCADE, null= True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username}: {self.body}"
+        return f"({self.id}) {self.user.username}: {self.body}"
 
     def serialize(self):
         return {
@@ -28,6 +28,7 @@ class Team(models.Model):
     name = models.CharField(max_length=36) 
     owner = models.ForeignKey('User', related_name="team", on_delete = models.CASCADE)
     code = models.IntegerField()
+    description = models.TextField(default='', blank=True)
 
     def serialize(self):
         return {
@@ -35,9 +36,14 @@ class Team(models.Model):
             "name"  : self.name,
             "owner" : self.owner.username,
             "code"  : self.code,
+            "description" : self.description,
             "members" : [{"user" : row.user.username, "id" : row.user.id} for row in Team_User.objects.filter(team=self)]
         }
 
 class Team_User(models.Model):
     user = models.ForeignKey('User', related_name= 'teams', on_delete= models.CASCADE)
     team = models.ForeignKey('Team', related_name='users', on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: team({self.team.name})"
