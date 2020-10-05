@@ -1,10 +1,10 @@
 # Django #
-/staticfiles
-*.log
-*.pot
-*.pyc
-__pycache__
-db.sqlite3
-media
-runtime.txt
-Procfile
+# /staticfiles
+# *.log
+# *.pot
+# *.pyc
+# __pycache__
+# db.sqlite3
+# media
+# runtime.txt
+# Procfile

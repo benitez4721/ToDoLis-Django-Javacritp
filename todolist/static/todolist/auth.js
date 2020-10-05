@@ -27,6 +27,9 @@ function register(e){
     const password = document.querySelector('#password1').value
     const confirmation = document.querySelector('#confirmation').value
     let errors = []
+    const email_regex = /^.+@\w+\.\w{2,3}/i
+    
+    !email_regex.test(email) ? errors.push('Enter a valid email') : true
     username.length == 0 || email.length == 0 || password.length == 0 || confirmation == 0? errors.push('All fields are required') : false
     if (errors.length > 0){
         display_errors(errors)

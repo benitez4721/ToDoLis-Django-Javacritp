@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'todolist/styles.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/6b3d39f47a.js" crossorigin="anonymous"></script>
     <title>Todolist</title>
@@ -13,10 +13,13 @@
 <body>
     <header>
         <nav id="nav" class="nav">
-            <h2>To Do List</h2>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-pencil-alt" style="font-size: 30px;"></i>
+                <h2>To Do List</h2>
+            </div>
             <div class="profile">
-                <span class="name">{{user.username}}</span>
-                <a href="{% url 'logout' %}" style = "margin-right: 10px;">Logout</a>
+                <strong class="name">{{user.username}}</strong>
+                <a href="{% url 'logout' %}" style = "margin-right: 10px; color: white;">Logout</a>
             </div>
         </nav>
     </header>
