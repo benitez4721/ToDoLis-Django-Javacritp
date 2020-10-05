@@ -205,36 +205,45 @@ function leave_team(id){
 // Join a team
 function join_team(){
 
-    code = document.querySelector('#code-input').value
-    typeof(code)
+    let code = document.querySelector('#code-input').value
     document.querySelector('#code-input').value = ''
-    if(code.length > 0 && typeof(code) == 'number'){
-        document.querySelector('#join-buttons').style.display = 'none'
-        document.querySelector('#join-spinner').style.display = 'block'
-        fetch('/join_team',{
-            method : "POST",
-            body: JSON.stringify({
-                code
+    if (isNaN(parseInt(code))){
+        document.querySelector(`#join-errors`).innerHTML = ''
+        const element = document.createElement('div')
+        element.classList.add('alert')
+        element.classList.add('alert-danger')
+        element.setAttribute('role','alert')
+        element.innerHTML = "The code must be a number"
+        document.querySelector(`#join-errors`).append(element)
+    }else{
+        if(code.length > 0){
+            document.querySelector('#join-buttons').style.display = 'none'
+            document.querySelector('#join-spinner').style.display = 'block'
+            fetch('/join_team',{
+                method : "POST",
+                body: JSON.stringify({
+                    code
+                })
             })
-        })
-        .then( resp => resp.json())
-        .then( resp => {
-            document.querySelector('#join-buttons').style.display = 'block'
-            document.querySelector('#join-spinner').style.display = 'none'
-            if(resp.ok){
-
-                render_team(resp.team)
-                $('#joinTeamModal').modal('hide')
-            }else{
-                document.querySelector(`#join-errors`).innerHTML = ''
-                const element = document.createElement('div')
-                element.classList.add('alert')
-                element.classList.add('alert-danger')
-                element.setAttribute('role','alert')
-                element.innerHTML = resp.message
-                document.querySelector(`#join-errors`).append(element)
-            }
-        })
+            .then( resp => resp.json())
+            .then( resp => {
+                document.querySelector('#join-buttons').style.display = 'block'
+                document.querySelector('#join-spinner').style.display = 'none'
+                if(resp.ok){
+    
+                    render_team(resp.team)
+                    $('#joinTeamModal').modal('hide')
+                }else{
+                    document.querySelector(`#join-errors`).innerHTML = ''
+                    const element = document.createElement('div')
+                    element.classList.add('alert')
+                    element.classList.add('alert-danger')
+                    element.setAttribute('role','alert')
+                    element.innerHTML = resp.message
+                    document.querySelector(`#join-errors`).append(element)
+                }
+            })
+        }
     }
 }
 
