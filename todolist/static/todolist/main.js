@@ -29,6 +29,7 @@ function load_tasks(){
 
 // Load teams view
 function load_teams(){
+    document.querySelector('#teams-container').innerHTML = ''
     fetch('/teams')
     .then( resp => resp.json())
     .then( resp => {
@@ -39,7 +40,6 @@ function load_teams(){
     })
     document.querySelector('#tasks-view').style.display = 'none'
     document.querySelector('#teams-view').style.display = 'block'
-    document.querySelector('#teams-container').innerHTML = ''
     document.querySelector('#teams-link').style.borderBottom = '3px solid #00bfa5'
     document.querySelector('#tasks-link').style.borderBottom = '3px solid transparent'
 }
@@ -206,8 +206,9 @@ function leave_team(id){
 function join_team(){
 
     code = document.querySelector('#code-input').value
+    typeof(code)
     document.querySelector('#code-input').value = ''
-    if(code.length > 0){
+    if(code.length > 0 && typeof(code) == 'number'){
         document.querySelector('#join-buttons').style.display = 'none'
         document.querySelector('#join-spinner').style.display = 'block'
         fetch('/join_team',{
