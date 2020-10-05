@@ -29,10 +29,10 @@ function load_tasks(){
 
 // Load teams view
 function load_teams(){
-    document.querySelector('#teams-container').innerHTML = ''
     fetch('/teams')
     .then( resp => resp.json())
     .then( resp => {
+        document.querySelector('#teams-container').innerHTML = ''
         resp.teams.forEach(team => {
             render_team(team, resp.actual_user)
             
