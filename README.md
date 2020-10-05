@@ -27,7 +27,7 @@ This application allows users to manage tasks, and create or join work teams in 
 
 ## Run app
 ```bash
-pip install -r requeriments.txt
+pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
