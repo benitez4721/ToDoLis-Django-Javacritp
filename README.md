@@ -31,6 +31,8 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
+## Why this app satisfies the requirements
+Unlike the other projects, this final project involves more API services, in addition to having a more elaborate front end. It also has the characteristic of a single page application, thanks to the use of javascript, thus improving the user experience. Finally the application is fully responsive to mobile devices.
 
 ## Deployed App
 - <https://todolistharv.herokuapp.com/>
